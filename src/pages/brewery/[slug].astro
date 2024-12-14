@@ -1,0 +1,51 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import client from '../../utils/sanityClient.mjs';
+
+
+export async function getStaticPaths() {
+
+const breweries = await client.fetch(`
+  *[_type == "brewery"] {
+	_id,
+	name,
+
+    "beers": *[_type=="beer" && references(^._id)]{
+    name,
+      style,
+      myScore
+  }
+  }
+`);
+
+    const paths = breweries.map(brewery => ({
+        params: { slug: brewery._id },
+        props: { brewery }
+    }));
+
+    return paths;
+}
+
+const { brewery } = Astro.props;
+console.log(brewery.beers);
+---
+<Layout>
+<h1>{brewery.name}</h1>
+
+<ul class="table-auto w-full">
+    <li class="table-row font-bold">
+        <span class="table-cell p-2 border">Name</span>
+
+        <span class="table-cell p-2 border">Style</span>
+        <span class="table-cell p-2 border">My Rating</span>
+    </li>
+    {brewery.beers.map(beer => (
+        <li class="table-row">
+            <span class="table-cell p-2 border">{beer.name} </span>
+            <span class="table-cell p-2 border">{beer.style} </span>
+            <span class="table-cell p-2 border">{beer.myScore} </span>
+            
+        </li>
+    ))}
+</ul>
+</Layout>
