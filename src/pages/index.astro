@@ -15,7 +15,8 @@ const beers = await client.fetch(`
 	  state,
 	  slug
 	},
-	avb,
+	abv,
+	style,
 	ibu,
 	myScore
   }
@@ -26,12 +27,13 @@ const beers = await client.fetch(`
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
+<Layout title="G-Rob beers">
 	
 	<ul class="table-auto w-full">
 		<li class="table-row font-bold">
 			<span class="table-cell p-2 border">Name</span>
 			<span class="table-cell p-2 border">Brewery</span>
+			<span class="table-cell p-2 border">Style</span>
 			<span class="table-cell p-2 border">City</span>
 			<span class="table-cell p-2 border">State</span>
 			<span class="table-cell p-2 border">ABV</span>
@@ -42,9 +44,11 @@ const beers = await client.fetch(`
 			<li class="table-row">
 				<span class="table-cell p-2 border">{beer.name} </span>
 				<span class="table-cell p-2 border"><a class="text-purple-700" href={`/brewery/${beer.brewery._id}`}>{beer.brewery.name}</a></span>
+				
+				<span class="table-cell p-2 border">{beer.style}</span>	
 				<span class="table-cell p-2 border">{beer.brewery.city}</span>
 				<span class="table-cell p-2 border">{beer.brewery.state}</span>
-				<span class="table-cell p-2 border">{beer.avb}</span>
+				<span class="table-cell p-2 border">{beer.abv}</span>
 				<span class="table-cell p-2 border">{beer.ibu}</span>
 				<span class="table-cell p-2 border">{beer.myScore}</span>
 			</li>

@@ -9,7 +9,8 @@ const breweries = await client.fetch(`
   *[_type == "brewery"] {
 	_id,
 	name,
-
+    city,
+    state,
     "beers": *[_type=="beer" && references(^._id)]{
     name,
       style,
@@ -28,9 +29,11 @@ const breweries = await client.fetch(`
 
 const { brewery } = Astro.props;
 console.log(brewery.beers);
+
 ---
-<Layout>
-<h1>{brewery.name}</h1>
+<Layout title=`${brewery.name} beers`>
+<h1 class="text-xl">{brewery.name}</h1>
+<h2 class="text-md mb-10">{brewery.city}, {brewery.state}</h2>
 
 <ul class="table-auto w-full">
     <li class="table-row font-bold">
