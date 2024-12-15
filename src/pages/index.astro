@@ -1,6 +1,7 @@
 ---
 import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Table from '../components/Table.js';
 import client from '../utils/sanityClient.mjs';
 
 
@@ -21,7 +22,7 @@ const beers = await client.fetch(`
 	myScore
   }
 `);
-
+console.log(beers[0])
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
@@ -29,31 +30,64 @@ const beers = await client.fetch(`
 
 <Layout title="G-Rob beers">
 	
-	<ul class="table-auto w-full">
-		<li class="table-row font-bold">
-			<span class="table-cell p-2 border">Name</span>
-			<span class="table-cell p-2 border">Brewery</span>
-			<span class="table-cell p-2 border">Style</span>
-			<span class="table-cell p-2 border">City</span>
-			<span class="table-cell p-2 border">State</span>
-			<span class="table-cell p-2 border">ABV</span>
-			<span class="table-cell p-2 border">IBU</span>
-			<span class="table-cell p-2 border">My Rating</span>
-		</li>
-		{beers.map(beer => (
-			<li class="table-row">
-				<span class="table-cell p-2 border">{beer.name} </span>
-				<span class="table-cell p-2 border"><a class="text-purple-700" href={`/brewery/${beer.brewery._id}`}>{beer.brewery.name}</a></span>
-				
-				<span class="table-cell p-2 border">{beer.style}</span>	
-				<span class="table-cell p-2 border">{beer.brewery.city}</span>
-				<span class="table-cell p-2 border">{beer.brewery.state}</span>
-				<span class="table-cell p-2 border">{beer.abv}</span>
-				<span class="table-cell p-2 border">{beer.ibu}</span>
-				<span class="table-cell p-2 border">{beer.myScore}</span>
-			</li>
-		))}
-	</ul>
 
+	<table class="sortable sticky table-auto w-full">
+		<thead>
+			<tr class="font-bold">
+				<th class="p-2 border">Name</th>
+				<th class="p-2 border">Brewery</th>
+				<th class="p-2 border">Style</th>
+				<th class="p-2 border">City</th>
+				<th class="p-2 border">State</th>
+				<th class="p-2 border">ABV</th>
+				<th class="p-2 border">IBU</th>
+				<th class="p-2 border">My Rating</th>
+			</tr>
+		</thead>
+		<tbody>
+			{beers.map(beer => (
+				<tr>
+					<td class="p-2 border">{beer.name}</td>
+					<td class="p-2 border"><a class="text-purple-700" href={`/brewery/${beer.brewery._id}`}>{beer.brewery.name}</a></td>
+					<td class="p-2 border">{beer.style}</td>
+					<td class="p-2 border">{beer.brewery.city}</td>
+					<td class="p-2 border">{beer.brewery.state}</td>
+					<td class="p-2 border">{beer.abv}</td>
+					<td class="p-2 border">{beer.ibu}</td>
+					<td class="p-2 border">{beer.myScore}</td>
+				</tr>
+			))}
+		</tbody>
+	</table>
 
 </Layout>
+
+<script>
+
+import 'sortable-tablesort/dist/sortable.min.js'
+
+
+</script>
+
+<style>
+	.sortable thead tr {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+	.sortable [aria-sort] {
+		background-color:beige
+	}
+	.sortable thead th:not(.no-sort)::after {
+    margin-left: 3px;
+    content: "▸";
+}
+.sortable thead th:not(.no-sort)[aria-sort=descending]::after {
+    color: inherit;
+    content: "▾";
+}
+.sortable thead th:not(.no-sort)[aria-sort=ascending]::after {
+    color: inherit;
+    content: "▴";
+}
+</style>
