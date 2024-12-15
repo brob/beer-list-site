@@ -30,7 +30,7 @@ console.log(beers[0])
 
 <Layout title="G-Rob beers">
 	
-
+	
 	<table class="sortable sticky table-auto w-full">
 		<thead>
 			<tr class="font-bold">
@@ -74,10 +74,17 @@ import 'sortable-tablesort/dist/sortable.min.js'
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: white;
+}
+.sortable thead th {
+	cursor: pointer;
+}
+.sortable thead th:hover {
+	background-color: #f1f1f1;
 }
 	.sortable [aria-sort] {
-		background-color:beige
+		background-color:beige;
+		background-color: #f1f1f1;
+
 	}
 	.sortable thead th:not(.no-sort)::after {
     margin-left: 3px;
