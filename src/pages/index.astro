@@ -68,34 +68,3 @@ import 'sortable-tablesort/dist/sortable.min.js'
 
 
 </script>
-
-<style>
-	.sortable thead tr {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-.sortable thead th {
-	cursor: pointer;
-}
-.sortable thead th:hover {
-	background-color: #f1f1f1;
-}
-	.sortable [aria-sort] {
-		background-color:beige;
-		background-color: #f1f1f1;
-
-	}
-	.sortable thead th:not(.no-sort)::after {
-    margin-left: 3px;
-    content: "▸";
-}
-.sortable thead th:not(.no-sort)[aria-sort=descending]::after {
-    color: inherit;
-    content: "▾";
-}
-.sortable thead th:not(.no-sort)[aria-sort=ascending]::after {
-    color: inherit;
-    content: "▴";
-}
-</style>

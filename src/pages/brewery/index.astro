@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import client from '../../utils/sanityClient.mjs';
+
+
+const breweries = await client.fetch(`
+  *[_type == "brewery"] {
+	_id,
+	name,
+    city,
+    state,
+    "beerCount": count(*[_type=="beer" && references(^._id)])
+  }
+`);
+
+
+
+---
+<Layout title=`Breweries`>
+<h1 class="text-xl mb-10">Breweries</h1>
+
+
+<table class="table-auto w-full sortable">
+    <thead>
+        <tr class="font-bold">
+            <th class="p-2 border">Name</th>
+            <th class="p-2 border">City</th>
+            <th class="p-2 border">State</th>
+            <th class="p-2 border">Number of Beers</th>
+        </tr>
+    </thead>
+    <tbody>
+        {breweries.map(brewery => (
+            <tr>
+                <td class="p-2 border"><a href={`/brewery/${brewery._id}`}>{brewery.name}</a></td>
+                <td class="p-2 border">{brewery.city}</td>
+                <td class="p-2 border">{brewery.state}</td>
+                <td class="p-2 border">{brewery.beerCount}</td>
+            </tr>
+        ))}
+    </tbody>
+</table>
+</Layout>
+
+<script>
+
+    import 'sortable-tablesort/dist/sortable.min.js'
+    
+    
+    </script>
