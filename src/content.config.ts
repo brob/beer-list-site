@@ -62,10 +62,10 @@ const beersByState = defineCollection({
 
             const beers = await getCollection('beers');        
         
-        console.log(beers[0])
-        const beersByState = states.map((state) => {
-            console.log(state)
-            const filteredBeers = beers.filter(beer => beer.data.brewery?.state === state);
+
+            const beersByState = states.map((state) => {
+
+                const filteredBeers = beers.filter(beer => beer.data.brewery?.state === state);
 
             const avgRating = parseFloat((filteredBeers.reduce((acc, beer) => acc + beer.data.myScore, 0) / filteredBeers.length).toFixed(2));
             return {
@@ -76,7 +76,7 @@ const beersByState = defineCollection({
         }
 
     })
-    console.log({beersByState})
+
     return beersByState
         
     }

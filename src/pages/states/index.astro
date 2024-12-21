@@ -27,7 +27,6 @@ const beersByState = await getCollection('beersByState')
                 if (state.data.name == "Unknown") {
                     return
                 }
-                console.log(state)
                 const { name, city, id, filteredBeers, avgRating, _id } = state.data;
                 return (
                 <tr>

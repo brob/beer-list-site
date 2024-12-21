@@ -4,7 +4,7 @@ import {getCollection} from 'astro:content';
 
 export async function getStaticPaths() {
 const beersByState = await getCollection('beersByState');
-console.log(beersByState[0])
+
 // const breweries = await client.fetch(`
 //   *[_type == "brewery"] {
 // 	_id,
@@ -24,8 +24,8 @@ console.log(beersByState[0])
             return
         }
 
-        console.log(state.data)
-    return {
+
+        return {
         params: { slug: state.data.id },
         props: { state: state.data }
     };
