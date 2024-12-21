@@ -58,15 +58,30 @@ const beersByState = defineCollection({
         const states= await client.fetch(`
             array::unique(*[_type == "brewery"]{state}["state"])
             `);
-
-            const beers = await getCollection('beers');        
+            const beers = await client.fetch(`
+                *[_type == "beer"] {
+                  _id,
+                  name,
+                  brewery->{
+                      _id,
+                    name,
+                    city,
+                    state,
+                    slug
+                  },
+                  abv,
+                  style,
+                  ibu,
+                  myScore
+                }
+              `);
         
 
             const beersByState = states.map((state) => {
 
-            const filteredBeers = beers.filter(beer => beer.data.brewery?.state === state);
+            const filteredBeers = beers.filter(beer => beer.brewery?.state === state);
 
-            const avgRating = parseFloat((filteredBeers.reduce((acc, beer) => acc + beer.data.myScore, 0) / filteredBeers.length).toFixed(2));
+            const avgRating = parseFloat((filteredBeers.reduce((acc, beer) => acc + beer.myScore, 0) / filteredBeers.length).toFixed(2));
             console.log({id: state || 'unknown', filteredBeers, avgRating})
             return {
             id: state || 'unknown',
