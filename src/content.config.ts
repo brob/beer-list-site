@@ -1,5 +1,4 @@
 import { z, defineCollection, getCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
 import client from './utils/sanityClient.mjs';
 const beers = defineCollection({
     loader: async () => {
