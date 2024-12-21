@@ -1,0 +1,61 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import client from '../../utils/sanityClient.mjs';
+import {getCollection} from 'astro:content';
+
+export async function getStaticPaths() {
+const breweries = await getCollection('breweries');
+
+// const breweries = await client.fetch(`
+//   *[_type == "brewery"] {
+// 	_id,
+// 	name,
+//     city,
+//     state,
+//     "beers": *[_type=="beer" && references(^._id)]{
+//     name,
+//       style,
+//       myScore
+//   }
+//   }
+// `);
+
+    const paths = breweries.map(brewery => ({
+        params: { slug: brewery.id },
+        props: { brewery: brewery.data }
+    }));
+
+    return paths;
+}
+
+const { brewery } = Astro.props;
+
+
+---
+<Layout title=`${brewery.name} beers`>
+<h1 class="text-xl">{brewery.name}</h1>
+<h2 class="text-md mb-10">{brewery.city}, {brewery.state}</h2>
+<table class="table-auto w-full sortable sticky">
+    <thead>
+        <tr class="font-bold">
+            <th class="p-2 border">Name</th>
+            <th class="p-2 border">Style</th>
+            <th class="p-2 border">My Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        {brewery.beers.map(beer => (
+            <tr>
+                <td class="p-2 border">{beer.name}</td>
+                <td class="p-2 border">{beer.style}</td>
+                <td class="p-2 border">{beer.myScore}</td>
+            </tr>
+        ))}
+    </tbody>
+</table>
+</Layout>
+
+<script>
+        import 'sortable-tablesort/dist/sortable.min.js'
+
+</script>

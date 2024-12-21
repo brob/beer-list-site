@@ -1,18 +1,10 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import client from '../../utils/sanityClient.mjs';
 
 
-const breweries = await client.fetch(`
-  *[_type == "brewery"] {
-	_id,
-	name,
-    city,
-    state,
-    "beerCount": count(*[_type=="beer" && references(^._id)])
-  }
-`);
-
+const breweries = await getCollection('breweries');
 
 
 ---
@@ -27,17 +19,21 @@ const breweries = await client.fetch(`
             <th class="p-2 border">City</th>
             <th class="p-2 border">State</th>
             <th class="p-2 border">Number of Beers</th>
+            <th class="p-2 border">Avg Rating</th>
         </tr>
     </thead>
     <tbody>
-        {breweries.map(brewery => (
+        {breweries.map(brewery => {
+            const { name, city, state, beerCount, avgRating, _id } = brewery.data;
+            return (
             <tr>
-                <td class="p-2 border"><a href={`/brewery/${brewery._id}`}>{brewery.name}</a></td>
-                <td class="p-2 border">{brewery.city}</td>
-                <td class="p-2 border">{brewery.state}</td>
-                <td class="p-2 border">{brewery.beerCount}</td>
+                <td class="p-2 border"><a href={`/breweries/${_id}`}>{name}</a></td>
+                <td class="p-2 border">{city}</td>
+                <td class="p-2 border">{state}</td>
+                <td class="p-2 border">{beerCount}</td>
+                <td class="p-2 border">{avgRating}</td>
             </tr>
-        ))}
+        )})}
     </tbody>
 </table>
 </Layout>

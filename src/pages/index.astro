@@ -3,26 +3,28 @@ import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 import Table from '../components/Table.js';
 import client from '../utils/sanityClient.mjs';
+import { getCollection } from 'astro:content';
 
+const beers = await getCollection('beers');
 
-const beers = await client.fetch(`
-  *[_type == "beer"] {
-	_id,
-	name,
-	brewery->{
-		_id,
-	  name,
-	  city,
-	  state,
-	  slug
-	},
-	abv,
-	style,
-	ibu,
-	myScore
-  }
-`);
-console.log(beers[0])
+// const beers = await client.fetch(`
+//   *[_type == "beer"] {
+// 	_id,
+// 	name,
+// 	brewery->{
+// 		_id,
+// 	  name,
+// 	  city,
+// 	  state,
+// 	  slug
+// 	},
+// 	abv,
+// 	style,
+// 	ibu,
+// 	myScore
+//   }
+// `);
+
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
@@ -45,18 +47,20 @@ console.log(beers[0])
 			</tr>
 		</thead>
 		<tbody>
-			{beers.map(beer => (
+			{beers.map(beer => {
+				const { brewery, name,style,abv,ibu,myScore } = beer.data;
+				return (
 				<tr>
-					<td class="p-2 border">{beer.name}</td>
-					<td class="p-2 border"><a class="text-purple-700" href={`/brewery/${beer.brewery._id}`}>{beer.brewery.name}</a></td>
-					<td class="p-2 border">{beer.style}</td>
-					<td class="p-2 border">{beer.brewery.city}</td>
-					<td class="p-2 border">{beer.brewery.state}</td>
-					<td class="p-2 border">{beer.abv}</td>
-					<td class="p-2 border">{beer.ibu}</td>
-					<td class="p-2 border">{beer.myScore}</td>
+					<td class="p-2 border">{name}</td>
+					<td class="p-2 border"><a class="text-purple-700" href={`/breweries/${brewery._id}`}>{brewery.name}</a></td>
+					<td class="p-2 border">{style}</td>
+					<td class="p-2 border">{brewery.city}</td>
+					<td class="p-2 border">{brewery.state}</td>
+					<td class="p-2 border">{abv}</td>
+					<td class="p-2 border">{ibu}</td>
+					<td class="p-2 border">{myScore}</td>
 				</tr>
-			))}
+			)})}
 		</tbody>
 	</table>
 
