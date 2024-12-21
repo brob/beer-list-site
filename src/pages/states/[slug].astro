@@ -55,7 +55,7 @@ const { state } = Astro.props;
         </thead>
         <tbody>
             {state.filteredBeers.map(beer => {
-                const { brewery, name, style, abv, ibu, myScore } = beer.data;
+                const { brewery, name, style, abv, ibu, myScore } = beer;
                 return (
                 <tr>
 					<td class="p-2 border">{name}</td>
