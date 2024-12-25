@@ -179,7 +179,8 @@ const beers = await getCollection('beers');
 
 
 
-	<table id="beers" class="sortable sticky table-auto w-full">
+	<div class="overflow-x-auto">
+		<table id="beers" class="sortable sticky table-auto w-full">
 		<thead>
 			<tr class="font-bold">
 				<th class="p-2 border">Name</th>
@@ -210,7 +211,7 @@ const beers = await getCollection('beers');
 			)})}
 		</tbody>
 	</table>
-
+</div>
 </Layout>
 
 <script>
