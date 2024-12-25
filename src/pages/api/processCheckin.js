@@ -109,6 +109,7 @@ async function getVenueDetails(locationUrl) {
     
 
 export async function GET({params, request}) {
+    console.log('start processing')
     let venueId, breweryId;
     // get checkin url from query parameters
     const url = new URL(request.url);

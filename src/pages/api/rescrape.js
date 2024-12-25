@@ -5,25 +5,20 @@ const {parse} = pkg;
 export const prerender = false;
 
 export async function GET({params, request}) {
+  console.log('running rescrape')
   console.log(import.meta.env.SITE_URL + `/api/processCheckin`)
-    const rss = await parse('https://untappd.com/rss/user/glrob54?key=22bf8950a97512ac2b5da8bb7617ab76')
-    // console.log(rss)
+  const rss = await parse('https://untappd.com/rss/user/glrob54?key=22bf8950a97512ac2b5da8bb7617ab76')
 
-// create list of checkins to scrape
-// data should be date and untappd link
-// push list to sanity
-// sanity can then trigger other functions to get the details
-
-const mappedData = rss.items.map(item => {
+  const mappedData = rss.items.map(item => {
     const date = new Date(item.published);
     const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 00:00`;
     const id = item.link.split('/').pop();
     return {
-      ...item,
-      _type: 'checkin',
-      date: formattedDate,
-      untappdUrl: item.link,
-      _id: id,
+        ...item,
+        _type: 'checkin',
+        date: formattedDate,
+        untappdUrl: item.link,
+        _id: id,
     }
   })
   // console.log(mappedData.map(item => item._id))
