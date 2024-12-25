@@ -32,8 +32,146 @@ const beers = await getCollection('beers');
 
 <Layout title="G-Rob beers">
 	
-	
-	<table class="sortable sticky table-auto w-full">
+	<div class="bg-blue-500 text-white text-center py-4 mb-4">
+		<h1 class="text-2xl font-bold">I quantify my life</h1>
+		<p>Here are the beers I've had with some data</p>
+	</div>
+
+
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+		<div class="bg-white shadow-md rounded-lg p-4 text-center">
+			<h2 class="text-xl font-bold">Total Beers</h2>
+			<p class="text-2xl">{beers.length}</p>
+		</div>
+		<div class="bg-white shadow-md rounded-lg p-4 text-center">
+			<h2 class="text-xl font-bold">Average ABV</h2>
+			<p class="text-2xl">{(beers.reduce((acc, beer) => acc + beer.data.abv, 0) / beers.length).toFixed(2)}%</p>
+		</div>
+		<div class="bg-white shadow-md rounded-lg p-4 text-center">
+			<h2 class="text-xl font-bold">Average Rating</h2>
+			<p class="text-2xl">{(beers.reduce((acc, beer) => acc + beer.data.myScore, 0) / beers.length).toFixed(2)}</p>
+		</div>
+		<div class="bg-white shadow-md rounded-lg p-4 text-center">
+			<h2 class="text-xl font-bold">Top 3 states</h2>
+			<ul class="text-2xl">
+				{Object.entries(beers.reduce((acc, beer) => {
+					acc[beer.data.brewery.state] = (acc[beer.data.brewery.state] || 0) + 1;
+					return acc;
+				}, {}))
+				.sort((a, b) => b[1] - a[1])
+				.slice(0, 3)
+				.map(([state, count]) => <li>{state}: {count}</li>)}
+			</ul>
+		</div>
+		<div class="bg-white shadow-md rounded-lg p-4 text-center">
+			<h2 class="text-xl font-bold">Top Ranked Beer</h2>
+			<ul class="text-2xl">
+				{(() => {
+					const topBeers = beers.sort((a, b) => b.data.myScore - a.data.myScore).slice(0, 3);
+					return (
+						<ul>
+							{topBeers.map(beer => (
+								<li>{beer.data.name} ({beer.data.myScore})</li>
+							))}
+						</ul>
+					);
+				})()}
+			</ul>
+		</div>
+		<div class="bg-white shadow-md rounded-lg p-4 text-center">
+			<h2 class="text-xl font-bold">Top 10 Beers Average IBU</h2>
+			<p class="text-2xl">
+				{(beers
+					.sort((a, b) => b.data.myScore - a.data.myScore)
+					.slice(0, 10)
+					.reduce((acc, beer) => acc + beer.data.ibu, 0) / 10).toFixed(2)}
+			</p>
+			<h2 class="text-xl font-bold">Top 10 Beers Average ABV</h2>
+			<p class="text-2xl">
+				{(beers
+					.sort((a, b) => b.data.myScore - a.data.myScore)
+					.slice(0, 10)
+					.reduce((acc, beer) => acc + beer.data.abv, 0) / 10).toFixed(2)}%
+			</p>
+		</div>
+		<div class="col-span-1 md:col-span-3">
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div class="bg-white shadow-md rounded-lg p-4 text-center">
+					<h2 class="text-xl font-bold">Top 3 Breweries (by count)</h2>
+					<ul class="text-2xl">
+						{Object.entries(beers.reduce((acc, beer) => {
+							acc[beer.data.brewery.name] = (acc[beer.data.brewery.name] || 0) + 1;
+							return acc;
+						}, {}))
+						.sort((a, b) => b[1] - a[1])
+						.slice(0, 3)
+						.map(([brewery, count]) => {
+							const breweryId = beers.find(beer => beer.data.brewery.name === brewery).data.brewery._id;
+							return <li><a class="text-purple-700" href={`/breweries/${breweryId}`}>{brewery}</a>: {count}</li>;
+						})}
+					</ul>
+				</div>
+				<div class="bg-white shadow-md rounded-lg p-4 text-center">
+					<h2 class="text-xl font-bold">Top 3 Breweries (by avg rating)</h2>
+					<ul class="text-2xl">
+						{Object.entries(beers.reduce((acc, beer) => {
+							const brewery = beer.data.brewery.name;
+							if (!acc[brewery]) {
+								acc[brewery] = { totalScore: 0, count: 0, id: beer.data.brewery._id };
+							}
+							acc[brewery].totalScore += beer.data.myScore;
+							acc[brewery].count += 1;
+							return acc;
+						}, {}))
+						.map(([brewery, { totalScore, count, id }]) => [brewery, totalScore / count, id])
+						.sort((a, b) => b[1] - a[1])
+						.slice(0, 3)
+						.map(([brewery, avgScore, id]) => <li><a class="text-purple-700" href={`/breweries/${id}`}>{brewery}</a>: {avgScore.toFixed(2)}</li>)}
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-span-1 md:col-span-3">
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+		<div class="bg-white shadow-md rounded-lg p-4 text-center">
+			<h2 class="text-xl font-bold">Top 3 Beer Styles (by avg rating)</h2>
+			<ul class="text-2xl">
+				{Object.entries(beers.reduce((acc, beer) => {
+					const style = beer.data.style;
+					if (!acc[style]) {
+						acc[style] = { totalScore: 0, count: 0 };
+					}
+					acc[style].totalScore += beer.data.myScore;
+					acc[style].count += 1;
+					return acc;
+				}, {}))
+				.map(([style, { totalScore, count }]) => [style, totalScore / count])
+				.sort((a, b) => b[1] - a[1])
+				.slice(0, 3)
+				.map(([style, avgScore]) => <li>{style}: {avgScore.toFixed(2)}</li>)}
+			</ul>
+		</div>
+		<div class="bg-white shadow-md rounded-lg p-4 text-center">
+			<h2 class="text-xl font-bold">Top 3 Beer Styles (by count)</h2>
+			<ul class="text-2xl">
+				{Object.entries(beers.reduce((acc, beer) => {
+					const style = beer.data.style;
+					acc[style] = (acc[style] || 0) + 1;
+					return acc;
+				}, {}))
+				.sort((a, b) => b[1] - a[1])
+				.slice(0, 3)
+				.map(([style, count]) => <li>{style}: {count}</li>)}
+			</ul>
+		</div>
+	</div>
+</div>
+</div>
+
+
+
+	<table id="beers" class="sortable sticky table-auto w-full">
 		<thead>
 			<tr class="font-bold">
 				<th class="p-2 border">Name</th>
