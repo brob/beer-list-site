@@ -1,31 +1,23 @@
 import puppeteer from 'puppeteer';
 import client from '../../utils/sanityClient.mjs';
+import * as cheerio from 'cheerio';
+
+
 export const prerender = false;
 
 
 async function getBeerDetails(url, brewery, rating, date) {
+    const response = await fetch(url);
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const beer = {
+        name: $('.name h1').text(),
+        style: $('.style').text(),
+        abv: parseFloat($('.abv').text().replace('% ABV', '')),
+        ibu: parseFloat($('.ibu').text().replace(' IBU', '')),
+        image: $('.label img').attr('src')
+    }
     
-    
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url);
-    const beer = await page.evaluate((rating) => {
-        const name = document.querySelector('.name h1').innerText;
-        const style = document.querySelector('.style').innerText;
-        const abv = parseFloat(document.querySelector('.abv').innerText.replace('% ABV', ''))
-        const ibu = parseFloat(document.querySelector('.ibu').innerText.replace(' IBU', ''))
-        const image = document.querySelector('.label img').src;
-        return {
-            name,
-            style,
-            abv,
-            ibu,
-            image,
-           
-        }
-    });
-
-    await browser.close();
     const result = await client.create({
         _type: 'beer',
         ...beer,
@@ -43,41 +35,24 @@ async function getBeerDetails(url, brewery, rating, date) {
 async function getBreweryDetails(url) {
 
     /* gets brewery details from untappd, pushes details into Sanity, and returns a Sanity brewery ID */
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url);
-
-    const brewery = await page.evaluate((url) => {
-        console.log({url})
-        const name = document.querySelector('.name h1').innerText;
-        const location = document.querySelector('.brewery').innerText;
-        // split location into city and state
-        const [city, stateCountry] = location.split(', ');
-
-        if (!stateCountry.includes('United States')) {
-            return {
-                name: name,
-                untappdLink: url,
-                city, state: stateCountry, country: ''
-            }
-        } 
-    
-        const [state, country] = stateCountry.split(' United States')
-
-        return {
-            name: name,
-            city,state,country
-        }
-
-        const image = document.querySelector('.label img').src;
-        return {
-            name,
-            location,
-            image
-        }
+    const response = await fetch(url);
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const brewery = {
+        name: $('.name h1').text(),
+        location: $('.brewery').text()
     }
-    );
-    await browser.close();
+    const [city, stateCountry] = brewery.location.split(', ');
+    if (!stateCountry.includes('United States')) {
+        brewery.city = city;
+        brewery.state = stateCountry;
+    } else {
+        const [state, country] = stateCountry.split(' United States');
+        brewery.city = city;
+        brewery.state = state;
+        brewery.country = country;
+    }
+
 
     const result = await client.create({
         _type: 'brewery',
@@ -90,32 +65,30 @@ async function getBreweryDetails(url) {
 
 async function getVenueDetails(locationUrl) {
 
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-
-    await page.goto(locationUrl);
-    let city;
-    let address = await page.$eval('.address', el => el.textContent.trim());
-    address = address.replace(' ( Map )', '');
-    const addressArray = address.split(', ')
+    const response = await fetch(locationUrl);
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    
+    const venue = {
+        name: $('.name').text(),
+        address: $('.address').text(),
+        logoUrl: $('.image-big img').attr('src')
+    }
+    
+    const addressArray = venue.address.split(', ')
     const state = addressArray[1]
     const notState = addressArray[0]
     const streetAbr = ["Ave", "Pkwy", "Dr", "St", "Cir", "Rd", "Road", ")", "Street", "Blvd", "Parkway", "Ct"]
     const containsStreetAbr = streetAbr.some(abr => notState.includes(abr));
     if (containsStreetAbr) {
-        // console.log(`${notState} contains a street abbreviation`);
         const matchingAbr = streetAbr.find(abr => notState.includes(abr));
         const stringArray = notState.split(matchingAbr + ' ')
         if (stringArray.length > 1) {
-            city = stringArray[stringArray.length - 1]
-            console.log(city)
-            // const result = await client.patch(venue._id).set({city}).commit();
-            console.log(`Venue address added to venue with ID NOT REALLY`);
-
+            venue.city = stringArray[stringArray.length - 1]
         } 
     }
+    const logoUrl = $('.image-big img').attr('src');
 
-    const logoUrl = await page.$eval('.image-big img', img => img.src);
     const urlSplit = locationUrl.split('/')
     const venueDoc = {
         _type: 'venue',
@@ -129,7 +102,6 @@ async function getVenueDetails(locationUrl) {
     };
     console.log(venueDoc)
 
-    await browser.close();
     const result = await client.create(venueDoc);
     console.log(`Venue created with ID ${result._id}`);
     return result._id;
@@ -143,31 +115,25 @@ export async function GET({params, request}) {
     const {checkinUrl} = Object.fromEntries(url.searchParams);
     const checkinId = checkinUrl.split('/').pop();
 
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(checkinUrl);
-
-    const startingData = await page.evaluate(() => {
-        const beerName = document.querySelector('.beer a').innerText;
-
-        const rating = parseFloat(document.querySelector('.caps').getAttribute('data-rating'),2);
-        const beerLink = document.querySelector('.beer a').href;
-        const breweryLink = document.querySelector('.beer span a').href;
-        const venueLink = document.querySelector('.location a').href;
-        const date = document.querySelector('.time').innerText;
-        const dateObject = new Date(date);
-        const formattedDate = `${dateObject.getFullYear()}-${dateObject.getMonth() + 1}-${dateObject.getDate()}`;
-
-        return {
-            beerName,
-            rating,
-            beerLink,
-            breweryLink,
-            venueLink,
-            date: formattedDate
-        }
-    })
-    await browser.close()
+    const response = await fetch(checkinUrl);
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const beerLink = `https://untappd.com${$('.beer a').attr('href')}`;
+    const beerName = $('.beer > p a').text();
+    const breweryLink = `https://untappd.com${$('.beer span a').attr('href')}`;
+    const venueLink = `https://untappd.com${$('.location a').attr('href')}`;
+    const date = $('.time').text();
+    const dateObject = new Date(date);
+    const formattedDate = `${dateObject.getFullYear()}-${dateObject.getMonth() + 1}-${dateObject.getDate()}`;
+    const rating = $('.rating-serving .caps').data('rating');
+    const startingData = {
+        beerLink,
+        beerName,
+        breweryLink,
+        venueLink,
+        date: formattedDate,
+        rating
+    }
     console.log({startingData});
 
     const sanityData = await client.fetch(`{ 

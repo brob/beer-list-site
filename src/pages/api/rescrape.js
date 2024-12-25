@@ -1,4 +1,3 @@
-import puppeteer from 'puppeteer';
 import pkg from 'rss-to-json';
 import client from '../../utils/sanityClient.mjs';
 const {parse} = pkg;
