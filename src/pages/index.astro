@@ -43,9 +43,16 @@ const beers = await getCollection('beers');
 			<h2 class="text-xl font-bold">Total Beers</h2>
 			<p class="text-2xl">{beers.length}</p>
 		</div>
+	
 		<div class="bg-white shadow-md rounded-lg p-4 text-center">
-			<h2 class="text-xl font-bold">Average ABV</h2>
-			<p class="text-2xl">{(beers.reduce((acc, beer) => acc + beer.data.abv, 0) / beers.length).toFixed(2)}%</p>
+			<h2 class="text-xl font-bold">Median Rating</h2>
+			<p class="text-2xl">
+				{(() => {
+					const sortedScores = beers.map(beer => beer.data.myScore).sort((a, b) => a - b);
+					const mid = Math.floor(sortedScores.length / 2);
+					return sortedScores.length % 2 !== 0 ? sortedScores[mid] : ((sortedScores[mid - 1] + sortedScores[mid]) / 2).toFixed(2);
+				})()}
+			</p>
 		</div>
 		<div class="bg-white shadow-md rounded-lg p-4 text-center">
 			<h2 class="text-xl font-bold">Average Rating</h2>
