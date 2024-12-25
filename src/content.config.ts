@@ -62,6 +62,7 @@ const beersByState = defineCollection({
                 *[_type == "beer"] {
                   _id,
                   name,
+                  date,
                   brewery->{
                       _id,
                     name,
@@ -97,6 +98,23 @@ const beersByState = defineCollection({
     }
 })
 
+const checkins = defineCollection({
+    loader: async () => {
+        const checkins = await client.fetch(`
+            *[_type == "checkin" && venue != null]{
+  ...,
+  beer->{..., brewery->},
+  venue->
+}|order(date desc)
+          `);
+
+          return checkins.map((checkin) => ({
+            id: checkin._id,
+            ...checkin
+          }))
+    }
+})
+
 // Expose your defined collection to Astro
 // with the `collections` export
-export const collections = { beers, breweries,beersByState };
+export const collections = { beers, breweries,beersByState, checkins };

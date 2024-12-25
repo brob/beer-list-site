@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const checkins = await getCollection('checkins')
+console.log(checkins[0])
+---
+
+<Layout>
+    <style>
+        .checkin-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .checkin {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+        .checkin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .checkin-user {
+            font-weight: bold;
+        }
+        .checkin-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .checkin-comment {
+            margin-top: 0.5rem;
+        }
+    </style>
+
+    <div class="checkin-list">
+        {checkins.map(checkin => (
+            <div class="checkin">
+                <div class="checkin-header">
+
+                    <span class="checkin-date">{new Date(checkin.data.date).toLocaleDateString()}</span>
+                </div>
+                <div class="checkin-beer">
+                    <strong>{checkin.data.beer.name}</strong> by {checkin.data.beer.brewery.name}
+                </div>
+                <div class="checkin-rating">
+                    Rating: {checkin.data.beer.myScore}
+                </div>
+                <div class="checkin-venue">
+                    Venue: {checkin.data.venue.name ? checkin.data.venue.name : 'Unknown'}
+                </div>
+                
+            </div>
+        ))}
+    </div>
+</Layout>
