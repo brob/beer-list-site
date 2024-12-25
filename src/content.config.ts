@@ -16,7 +16,8 @@ const beers = defineCollection({
               abv,
               style,
               ibu,
-              myScore
+              myScore,
+              notTasted
             }
           `);
 

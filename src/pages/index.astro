@@ -194,9 +194,10 @@ const beers = await getCollection('beers');
 		</thead>
 		<tbody>
 			{beers.map(beer => {
-				const { brewery, name,style,abv,ibu,myScore } = beer.data;
+				const { brewery, name,style,abv,ibu,myScore, notTasted } = beer.data;
+				console.log({notTasted})
 				return (
-				<tr>
+				<tr class={`${notTasted ? 'bg-green-100' : ''}`}>
 					<td class="p-2 border">{name}</td>
 					<td class="p-2 border"><a class="text-purple-700" href={`/breweries/${brewery._id}`}>{brewery.name}</a></td>
 					<td class="p-2 border">{style}</td>
