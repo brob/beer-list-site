@@ -82,7 +82,7 @@ const beersByState = defineCollection({
             const filteredBeers = beers.filter(beer => beer.brewery?.state === state);
 
             const avgRating = parseFloat((filteredBeers.reduce((acc, beer) => acc + beer.myScore, 0) / filteredBeers.length).toFixed(2));
-            console.log({id: state || 'unknown', filteredBeers, avgRating})
+
             return {
             id: state || 'unknown',
             filteredBeers,
