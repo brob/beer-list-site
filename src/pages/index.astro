@@ -32,9 +32,9 @@ const beers = await getCollection('beers');
 
 <Layout title="G-Rob beers">
 	
-	<div class="bg-blue-500 text-white text-center py-4 mb-4">
-		<h1 class="text-2xl font-bold">I quantify my life</h1>
-		<p>Here are the beers I've had with some data</p>
+	<div class="bg-blue-500 text-white text-center py-10 mb-4">
+		<h1 class="text-4xl mb-3 font-bold">I quantify my life</h1>
+		<p class="text-2xl py-3 max-w-prose leading-[1.4em] mx-auto">This is a site that shows the aggregated data about my beer drinking pulled (painstakingly by my son) from Untappd.</p>
 	</div>
 
 
@@ -130,11 +130,11 @@ const beers = await getCollection('beers');
 							acc[brewery].count += 1;
 							return acc;
 						}, {}))
+						.filter(([brewery, { count }]) => count >= 3)
 						.map(([brewery, { totalScore, count, id }]) => [brewery, totalScore / count, id])
 						.sort((a, b) => b[1] - a[1])
 						.slice(0, 3)
-						.map(([brewery, avgScore, id]) => <li><a class="text-purple-700" href={`/breweries/${id}`}>{brewery}</a>: {avgScore.toFixed(2)}</li>)}
-					</ul>
+						.map(([brewery, avgScore, id]) => <li><a class="text-purple-700" href={`/breweries/${id}`}>{brewery}</a>: {avgScore.toFixed(2)}</li>)}</ul>
 				</div>
 			</div>
 		</div>
@@ -153,6 +153,7 @@ const beers = await getCollection('beers');
 					acc[style].count += 1;
 					return acc;
 				}, {}))
+				.filter(([style, { count }]) => count >= 3)
 				.map(([style, { totalScore, count }]) => [style, totalScore / count])
 				.sort((a, b) => b[1] - a[1])
 				.slice(0, 3)
