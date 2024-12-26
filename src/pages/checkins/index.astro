@@ -50,7 +50,7 @@ console.log(checkins[0])
                     Rating: {checkin.data.beer.myScore}
                 </div>
                 <div class="checkin-venue">
-                    Venue: {checkin.data.venue.name ? checkin.data.venue.name : 'Unknown'}
+                    Venue: {checkin.data?.venue?.name ? checkin.data.venue.name : 'Unknown'}
                 </div>
                 
             </div>
