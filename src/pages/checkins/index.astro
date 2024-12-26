@@ -44,7 +44,7 @@ console.log(checkins[0])
                     <span class="checkin-date">{new Date(checkin.data.date).toLocaleDateString()}</span>
                 </div>
                 <div class="checkin-beer">
-                    <strong>{checkin.data.beer.name}</strong> by {checkin.data.beer.brewery.name}
+                    <strong>{checkin.data.beer.name}</strong> {checkin.data.beer.brewery && <>by <a href={`/breweries/${checkin.data.beer.brewery._id}`}>{checkin.data.beer.brewery.name}</a></>}
                 </div>
                 <div class="checkin-rating">
                     Rating: {checkin.data.beer.myScore}
