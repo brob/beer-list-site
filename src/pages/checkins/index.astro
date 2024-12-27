@@ -38,7 +38,7 @@ console.log(checkins[0])
 
     <div class="checkin-list">
         {checkins.map(checkin => (
-            <div class="checkin">
+            <div class="checkin" id={checkin.id}>
                 <div class="checkin-header">
 
                     <span class="checkin-date">{new Date(checkin.data.date).toLocaleDateString()}</span>

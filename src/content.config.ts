@@ -17,6 +17,8 @@ const beers = defineCollection({
               style,
               ibu,
               myScore,
+              "firstTaste": *[_type=="checkin" && references(^._id)][0].date,
+             "checkin":  *[_type=="checkin" && references(^._id)]{_id},
               notTasted
             }
           `);

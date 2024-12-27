@@ -190,13 +190,14 @@ const beers = await getCollection('beers');
 				<th class="p-2 border">State</th>
 				<th class="p-2 border">ABV</th>
 				<th class="p-2 border">IBU</th>
+				<th class="p-2 border">First taste</th>
 				<th class="p-2 border">My Rating</th>
 			</tr>
 		</thead>
 		<tbody>
 			{beers.map(beer => {
-				const { brewery, name,style,abv,ibu,myScore, notTasted } = beer.data;
-				console.log({notTasted})
+				const { brewery, name,style,abv,ibu,myScore,firstTaste, notTasted, checkin } = beer.data;
+				console.log(checkin.length)
 				return (
 				<tr class={`${notTasted ? 'bg-green-100' : ''}`}>
 					<td class="p-2 border">{name}</td>
@@ -206,6 +207,7 @@ const beers = await getCollection('beers');
 					<td class="p-2 border">{brewery.state}</td>
 					<td class="p-2 border">{abv}</td>
 					<td class="p-2 border">{ibu}</td>
+					<td class="p-2 border">{(checkin.length > 0) && (<a href={`/checkins/#${checkin[0]._id}`}>{new Date(firstTaste).toLocaleDateString()}</a>)}</td>
 					<td class="p-2 border">{myScore}</td>
 				</tr>
 			)})}
