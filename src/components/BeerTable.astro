@@ -21,7 +21,6 @@ const { beers } = Astro.props;
     <tbody>
         {beers.map(beer => {
             const { brewery, name,style,abv,ibu,myScore,firstTaste, notTasted, checkin } = beer.data;
-            console.log(checkin.length)
             return (
             <tr class={`${notTasted ? 'bg-green-100' : ''}`}>
                 <td class="p-2 border">{name}</td>
@@ -45,12 +44,12 @@ const { beers } = Astro.props;
 
     import 'sortable-tablesort/dist/sortable.min.js'
     
-    window.addEventListener('load', function () {
-    const el = document.getElementById('firstSort')
+//     window.addEventListener('load', function () {
+//     const el = document.getElementById('firstSort')
    
-    if (el) {
-      el.click()
-    }
-  })
+//     if (el) {
+//       el.click()
+//     }
+//   })
     </script>
     
