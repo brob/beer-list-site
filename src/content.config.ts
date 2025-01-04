@@ -110,7 +110,6 @@ const checkins = defineCollection({
   venue->{name, city, state},
 }|order(dateTime(date) desc)
           `);
-          console.log(checkins)
           return checkins.map((checkin) => ({
             id: checkin._id,
             ...checkin

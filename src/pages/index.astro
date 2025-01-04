@@ -4,6 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import Table from '../components/Table.js';
 import client from '../utils/sanityClient.mjs';
 import { getCollection } from 'astro:content';
+import BeerTable from '../components/BeerTable.astro';
 
 const beers = await getCollection('beers');
 
@@ -178,47 +179,5 @@ const beers = await getCollection('beers');
 </div>
 
 
-
-	<div class="overflow-x-auto">
-		<table id="beers" class="sortable sticky table-auto w-full">
-		<thead>
-			<tr class="font-bold">
-				<th class="p-2 border">Name</th>
-				<th class="p-2 border">Brewery</th>
-				<th class="p-2 border">Style</th>
-				<th class="p-2 border">City</th>
-				<th class="p-2 border">State</th>
-				<th class="p-2 border">ABV</th>
-				<th class="p-2 border">IBU</th>
-				<th class="p-2 border">First taste</th>
-				<th class="p-2 border">My Rating</th>
-			</tr>
-		</thead>
-		<tbody>
-			{beers.map(beer => {
-				const { brewery, name,style,abv,ibu,myScore,firstTaste, notTasted, checkin } = beer.data;
-				console.log(checkin.length)
-				return (
-				<tr class={`${notTasted ? 'bg-green-100' : ''}`}>
-					<td class="p-2 border">{name}</td>
-					<td class="p-2 border"><a class="text-purple-700" href={`/breweries/${brewery._id}`}>{brewery.name}</a></td>
-					<td class="p-2 border">{style}</td>
-					<td class="p-2 border">{brewery.city}</td>
-					<td class="p-2 border">{brewery.state}</td>
-					<td class="p-2 border">{abv}</td>
-					<td class="p-2 border">{ibu}</td>
-					<td class="p-2 border">{(checkin.length > 0) && (<a href={`/checkins/#${checkin[0]._id}`}>{new Date(firstTaste).toLocaleDateString()}</a>)}</td>
-					<td class="p-2 border">{myScore}</td>
-				</tr>
-			)})}
-		</tbody>
-	</table>
-</div>
+	<BeerTable beers={beers} />
 </Layout>
-
-<script>
-
-import 'sortable-tablesort/dist/sortable.min.js'
-
-
-</script>
