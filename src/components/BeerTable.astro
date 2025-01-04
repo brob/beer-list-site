@@ -4,7 +4,7 @@ const { beers } = Astro.props;
 ---
 
 <div class="overflow-x-auto">
-    <table id="beers" class="sortable sticky table-auto w-full">
+    <table id="beers" class="sortable sticky desc table-auto w-full">
     <thead>
         <tr class="font-bold">
             <th class="p-2 border">Name</th>
@@ -14,7 +14,7 @@ const { beers } = Astro.props;
             <th class="p-2 border">State</th>
             <th class="p-2 border">ABV</th>
             <th class="p-2 border">IBU</th>
-            <th class="p-2 border">First taste</th>
+            <th class="p-2 border" id="firstSort">First taste</th>
             <th class="p-2 border">My Rating</th>
         </tr>
     </thead>
@@ -31,7 +31,7 @@ const { beers } = Astro.props;
                 <td class="p-2 border"><a href={`/states/${brewery.state}`}>{brewery.state}</a></td>
                 <td class="p-2 border">{abv}</td>
                 <td class="p-2 border">{ibu}</td>
-                <td class="p-2 border" data-sort={new Date(firstTaste).getTime()}>{(checkin.length > 0) && (<a href={`/checkins/#${checkin[0]._id}`}>{new Date(firstTaste).toLocaleDateString()}</a>)}</td>
+                <td class="p-2 border" data-sort-tbr="1" data-sort={new Date(firstTaste).getTime()}>{(checkin.length > 0) && (<a href={`/checkins/#${checkin[0]._id}`}>{new Date(firstTaste).toLocaleDateString()}</a>)}</td>
                 <td class="p-2 border">{myScore}</td>
             </tr>
         )})}
@@ -45,6 +45,12 @@ const { beers } = Astro.props;
 
     import 'sortable-tablesort/dist/sortable.min.js'
     
-    
+    window.addEventListener('load', function () {
+    const el = document.getElementById('firstSort')
+   
+    if (el) {
+      el.click()
+    }
+  })
     </script>
     
