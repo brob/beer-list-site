@@ -32,7 +32,7 @@ const { beers } = Astro.props;
                 <td class="p-2 border">{abv}</td>
                 <td class="p-2 border">{ibu}</td>
                 <td class="p-2 border" data-sort-tbr="1" data-sort={new Date(firstTaste).getTime()}>{checkin && (<a href={`/checkins/#${checkin._id}`}>{new Date(firstTaste).toLocaleDateString()}</a>)}</td>
-                <td class="p-2 border">{checkin && (<p>{checkin?.venue?.name} ({checkin?.venue?.city})</p>)}</td>
+                <td class="p-2 border">{checkin && (<a href={`/venues/${checkin?.venue?.slug}`}>{checkin?.venue?.name} ({checkin?.venue?.city})</a>)}</td>
                 <td class="p-2 border">{myScore}</td>
             </tr>
         )})}
