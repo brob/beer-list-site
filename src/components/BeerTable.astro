@@ -15,6 +15,7 @@ const { beers } = Astro.props;
             <th class="p-2 border">ABV</th>
             <th class="p-2 border">IBU</th>
             <th class="p-2 border" id="firstSort">First taste</th>
+            <th class="p-2 border">Venue</th>
             <th class="p-2 border">My Rating</th>
         </tr>
     </thead>
@@ -30,7 +31,8 @@ const { beers } = Astro.props;
                 <td class="p-2 border"><a href={`/states/${brewery.state}`}>{brewery.state}</a></td>
                 <td class="p-2 border">{abv}</td>
                 <td class="p-2 border">{ibu}</td>
-                <td class="p-2 border" data-sort-tbr="1" data-sort={new Date(firstTaste).getTime()}>{(checkin.length > 0) && (<a href={`/checkins/#${checkin[0]._id}`}>{new Date(firstTaste).toLocaleDateString()}</a>)}</td>
+                <td class="p-2 border" data-sort-tbr="1" data-sort={new Date(firstTaste).getTime()}>{checkin && (<a href={`/checkins/#${checkin._id}`}>{new Date(firstTaste).toLocaleDateString()}</a>)}</td>
+                <td class="p-2 border">{checkin && (<p>{checkin?.venue?.name} ({checkin?.venue?.city})</p>)}</td>
                 <td class="p-2 border">{myScore}</td>
             </tr>
         )})}
@@ -44,12 +46,12 @@ const { beers } = Astro.props;
 
     import 'sortable-tablesort/dist/sortable.min.js'
     
-//     window.addEventListener('load', function () {
-//     const el = document.getElementById('firstSort')
+    window.addEventListener('load', function () {
+    const el = document.getElementById('firstSort')
    
-//     if (el) {
-//       el.click()
-//     }
-//   })
-    </script>
+    if (el) {
+      el.click()
+    }
+  })
+</script>
     
