@@ -1,0 +1,15 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { RatingGame } from "../components/RatingGame.tsx";
+import { getCollection } from "astro:content";
+
+const beers = await getCollection("beers")
+const beerCount = beers.length;
+---
+
+<Layout title=`Beer Battle`>
+    <h1 class="text-xl mb-10">Beer Battle</h1>
+    <p>See how well you know Gary's taste in beers. We'll display 2 beers, you choose which he ranked higher (or if they're the same).</p>
+
+    <RatingGame beers={beers} beerCount={beerCount} client:only />
+</Layout>
