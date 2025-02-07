@@ -1,5 +1,6 @@
 ---
 import Nav from "../components/Nav.astro"
+import Search from "../components/Search"
 const { title } = Astro.props
 ---
 <!doctype html>
@@ -16,6 +17,8 @@ const { title } = Astro.props
 
 		<header class="md:flex justify-between mb-8 items-center">
 			<h1 class="text-3xl mb-3 md:mb-0"><a href="/">Quantifiably Brewed <span class="text-smg">by Gary</span></a></h1>
+			<Search client:load />
+
 			<Nav />
 		</header>
 		<slot />
