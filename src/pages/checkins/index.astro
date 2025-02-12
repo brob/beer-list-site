@@ -43,12 +43,12 @@ const checkins = await getCollection('checkins')
 
                     <span class="checkin-date">{new Date(checkin.data.date).toLocaleDateString()}</span>
                 </div>
-                <div class="checkin-beer">
-                    <strong>{checkin.data.beer.name}</strong> {checkin.data.beer.brewery && <>by <a href={`/breweries/${checkin.data.beer.brewery._id}`}>{checkin.data.beer.brewery.name}</a></>}
-                </div>
-                <div class="checkin-rating">
+                {checkin.data.beer && <div class="checkin-beer">
+                    <strong>{checkin.data?.beer?.name || "Some beer I'd already tasted!"}</strong> {checkin.data.beer.brewery && <>by <a href={`/breweries/${checkin.data.beer.brewery._id}`}>{checkin.data.beer.brewery.name}</a></>}
+                </div>}
+                {checkin.data.beer && <div class="checkin-rating">
                     Rating: {checkin.data.beer.myScore}
-                </div>
+                </div>}
                 <div class="checkin-venue">
                     Venue: {checkin.data?.venue?.name ? checkin.data.venue.name : 'Unknown'}
                 </div>

@@ -34,6 +34,7 @@ export async function GET({params, request}) {
   for (const checkin of checkinsToCreate) {
     //strip venue ID from 
     try {
+      console.log(checkin._id)
       checkinsInSanity.push(await client.create({
         _type: 'checkin',
         date: checkin.date,
@@ -42,15 +43,14 @@ export async function GET({params, request}) {
         processed: false
       }));
       // hit api endpoint attachBeerAndLocationUrl
-      fetch(import.meta.env.SITE_URL + `/api/processCheckin?checkinUrl=${checkin.untappdUrl}&checkinId=${checkin._id}`, {
+      const result = await fetch(import.meta.env.SITE_URL + `/api/processCheckin?checkinUrl=${checkin.untappdUrl}&checkinId=${checkin._id}`, {
         method: 'GET',
 
         headers: {
           'Content-Type': 'application/json'
         },
 
-      });
-      
+      })
     } catch (error) {
       console.error(error);
     }

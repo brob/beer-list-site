@@ -39,8 +39,8 @@ async function getBreweryDetails(url) {
     const html = await response.text();
     const $ = cheerio.load(html);
     const brewery = {
-        name: $('.name h1').text(),
-        location: $('.brewery').text()
+        name: $('.name h1').text().trim(),
+        location: $('.brewery').text().trim()
     }
     const [city, stateCountry] = brewery.location.split(', ');
     if (!stateCountry.includes('United States')) {
@@ -64,19 +64,27 @@ async function getBreweryDetails(url) {
 }
 
 async function getVenueDetails(locationUrl) {
+    const urlSplit = locationUrl.split('/')
 
+    const sanityVenue = await client.fetch(`*[_type == "venue" && _id == $id]{_id}`, { id: urlSplit[urlSplit.length-1] });
+    console.log('venue already in sanity', sanityVenue)
+
+    if (sanityVenue.length > 0) {
+        return sanityVenue[0]._id;  
+    }
     const response = await fetch(locationUrl);
     const html = await response.text();
     const $ = cheerio.load(html);
     
     const venue = {
-        name: $('.name').text(),
-        address: $('.address').text(),
+        name: $('.venue-name h1').text().trim(),
+        address: $('.venue-name .address').text().trim(),
         logoUrl: $('.image-big img').attr('src')
     }
     
     const addressArray = venue.address.split(', ')
     const state = addressArray[1]
+    console.log({address: venue.address, thearray: addressArray, state})
     const notState = addressArray[0]
     const streetAbr = ["Ave", "Pkwy", "Dr", "St", "Cir", "Rd", "Road", ")", "Street", "Blvd", "Parkway", "Ct"]
     const containsStreetAbr = streetAbr.some(abr => notState.includes(abr));
@@ -89,13 +97,13 @@ async function getVenueDetails(locationUrl) {
     }
     const logoUrl = $('.image-big img').attr('src');
 
-    const urlSplit = locationUrl.split('/')
     const venueDoc = {
         _type: 'venue',
         _id: urlSplit[urlSplit.length-1],
         slug: urlSplit[urlSplit.length -2],
         locationUrl,
-        city,
+        name: venue.name,
+        city: venue.city,
         state,
         logoUrl
     };
