@@ -95,7 +95,6 @@ async function getVenueDetails(locationUrl) {
         _id: urlSplit[urlSplit.length-1],
         slug: urlSplit[urlSplit.length -2],
         locationUrl,
-        address,
         city,
         state,
         logoUrl
