@@ -1,3 +1,4 @@
+
 import pkg from 'rss-to-json';
 const {parse} = pkg;
 
@@ -11,7 +12,8 @@ export async function GET({params, request}) {
 
     return new Response(JSON.stringify(rss), {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
         }
     })
 }

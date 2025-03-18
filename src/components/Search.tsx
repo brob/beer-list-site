@@ -1,20 +1,27 @@
 import { useState } from 'react';
 import { actions } from 'astro:actions'
+import useDebounce from '../utils/useDebounce';
 const Search = () => {
+    const [inputValue, setInputValue] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isFocused, setIsFocused] = useState(false);
 
-    const handleFocus = () => setIsFocused(true);
-    const handleBlur = () => setIsFocused(false);
-    const handleSearch = async (event) => {
-        const query = event.target.value;
-        const { data, error } = await actions.search({ q: query || '' });
-        
+    const debouncedRequest = useDebounce(async () => {
+        const { data, error } = await actions.search({ q: inputValue || '' });
+
         if (error) {
             console.error(error);
             return;
         }
         setSearchResults(data || []);
+
+    })
+
+    const handleFocus = () => setIsFocused(true);
+    const handleSearch = async (event) => {
+        const query = event.target.value;
+        setInputValue(query)
+        debouncedRequest();
     };
     return (
         <div className="relative md:m-0 mb-2">
@@ -23,6 +30,7 @@ const Search = () => {
             name="Search"
             className="border border-gray-300 rounded-lg w-full p-2"
             type="text"
+            value={inputValue}
             placeholder="Search beers..."
             onInput={handleSearch}
             onFocus={handleFocus}
