@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 
 
 function BeerCard({beer, isCorrect, hasAnswered, setHasAnswered, setWinner}) {
-    const {name, description, brewery, abv, ibu, myScore} = beer.data
+    const {name, description, brewery, abv, ibu, myScore, style} = beer.data
     
     const handleClick = () => {
         if (!hasAnswered) {
@@ -25,6 +25,7 @@ function BeerCard({beer, isCorrect, hasAnswered, setHasAnswered, setWinner}) {
             <p className="text-gray-500 mb-2">{brewery.name}</p>
             <p className="text-gray-500 mb-2">ABV: {abv}%</p>
             <p className="text-gray-500">IBU: {ibu}</p>
+            <p className="text-gray-500">Style: {style}</p>
         </div>
     )
 }
