@@ -15,8 +15,8 @@ export async function getStaticPaths() {
 
 const { venue } = Astro.props;
 ---
-<Layout title=`${venue.name} beers`>
-<h1 class="text-xl">{venue.name}</h1>
+<Layout title=`${venue?.name} beers`>
+<h1 class="text-xl">{venue?.name}</h1>
 <h2 class="text-md mb-10">{venue.city}, {venue.state}</h2>
 <table class="table-auto w-full sortable sticky">
     <thead>
