@@ -6,7 +6,9 @@ const { beers } = Astro.props;
   <table id="beers" class="sortable sticky desc table-auto w-full">
     <thead>
       <tr class="font-bold">
+        <th>#</th>
         <th class="p-2 border" id="firstSort">Name</th>
+
         <th class="p-2 border">Brewery</th>
         <th class="p-2 border">Style</th>
         <th class="p-2 border">City</th>
@@ -22,7 +24,8 @@ const { beers } = Astro.props;
     </thead>
     <tbody>
       {
-        beers.map((beer) => {
+        beers.map((beer, i) => {
+            const row = i+1;
           const {
             brewery,
             name,
@@ -36,6 +39,7 @@ const { beers } = Astro.props;
           } = beer.data;
           return (
             <tr class={`${notTasted ? "bg-green-100" : ""}`}>
+                
               <td class="p-2 border">{name}</td>
               <td class="p-2 border">
                 <a class="text-purple-700" href={`/breweries/${brewery._id}`}>
@@ -91,3 +95,22 @@ const { beers } = Astro.props;
     }
   });
 </script>
+
+<style>
+    tbody tr::before {
+        content: counter(row-counter);
+        counter-increment: row-counter;
+        display: table-cell;
+        padding-right: 1rem;
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    tbody {
+        counter-reset: row-counter;
+    }
+
+    tbody tr {
+        display: table-row;
+    }
+</style>
