@@ -192,6 +192,7 @@ export async function GET({params, request}) {
         _id: checkinId,
         _type: 'checkin',
         processed: true,
+        date: dateObject.toISOString(),
         beer: {
             _type: 'reference',
             _ref: beerId
