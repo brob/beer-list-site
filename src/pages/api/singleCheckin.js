@@ -199,7 +199,7 @@ export async function GET({params, request}) {
             _type: 'reference',
             _ref: venueId
         }
-    }).commit()
+    })
     console.log(updatedCheckin);
 
     return new Response(JSON.stringify({beerId, startingData, breweryId, venueId}), {
