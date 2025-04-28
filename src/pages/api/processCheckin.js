@@ -126,15 +126,18 @@ export async function GET({params, request}) {
     const response = await fetch(checkinUrl);
     const html = await response.text();
     const $ = cheerio.load(html);
+    console.log($('.location span a').attr('href'))
     const beerLink = `https://untappd.com${$('.beer a').attr('href')}`;
+    const untappdId = beerLink.split('/').pop();
     const beerName = $('.beer > p a').text();
     const breweryLink = `https://untappd.com${$('.beer span a').attr('href')}`;
-    const venueLink = `https://untappd.com${$('.location a').attr('href')}`;
+    const venueLink = $('.location a').attr('href') ? `https://untappd.com${$('.location a').attr('href')}` : `https://untappd.com/at-home`;
     const date = $('.time').text();
     const dateObject = new Date(date);
-    const formattedDate = `${dateObject.getFullYear()}-${dateObject.getMonth() + 1}-${dateObject.getDate()}`;
+    const formattedDate = `${dateObject.getFullYear()}-${dateObject.getMonth() + 1}-${dateObject.getDate()} 00:00`;
     const rating = $('.rating-serving .caps').data('rating');
     const startingData = {
+        _id: untappdId,
         beerLink,
         beerName,
         breweryLink,
@@ -153,12 +156,16 @@ export async function GET({params, request}) {
             breweryUrl: startingData.breweryLink,
             venueUrl: startingData.venueLink
         });
-    console.log({sanityData});
     // If beer is already in Sanity, return early
     if (sanityData?.sanityBeer.length > 0) {
         console.log('beer already in sanity')
         
-        return new Response(JSON.stringify({beerId: sanityData?.sanityBeer[0]._id, startingData}));
+        return new Response(JSON.stringify({beerId: sanityData?.sanityBeer[0]._id, startingData, message: 'Beer already exists'}), {
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+            }
+        });
     }
 
     // If venue already exists, set venueId to the existing venue ID
@@ -195,6 +202,11 @@ export async function GET({params, request}) {
     }).commit();
     console.log(updatedCheckin);
 
-    return new Response(JSON.stringify({beerId, startingData, breweryId, venueId}));
+    return new Response(JSON.stringify({beerId, startingData, breweryId, venueId}), {
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*', // Allow all origins for CORS
+        }
+    });
 
 }
