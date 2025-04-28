@@ -190,6 +190,7 @@ export async function GET({params, request}) {
     console.log(checkinId)
     const updatedCheckin = await client.create({
         _id: checkinId,
+        _type: 'checkin',
         processed: true,
         beer: {
             _type: 'reference',
